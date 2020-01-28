@@ -1,0 +1,2 @@
+- src: jumperfly.kubernetes_master
+  version: v0.3.0

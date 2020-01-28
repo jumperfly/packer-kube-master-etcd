@@ -1,0 +1,15 @@
+- hosts: kube_master_nodes
+  become: yes
+  vars:
+    kube_master_encrpytion_config_enabled: no
+    kube_master_enable_services: no
+  pre_tasks:
+    - name: Set etcd facts
+      set_fact:
+        etcd_client_listen_ip: "127.0.0.1"
+        etcd_peer_listen_ip: "127.0.0.1"
+  roles:
+    - jumperfly.kubernetes_master
+  post_tasks:
+    - name: Clean yum cache
+      command: yum clean all

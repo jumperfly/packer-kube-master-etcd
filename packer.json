@@ -1,0 +1,53 @@
+{
+    "variables": {
+        "vagrant_home": "{{env `HOME`}}/.vagrant.d",
+        "base_box_version": "{{env `BASE_BOX_VERSION`}}",
+        "kube_major_minor": "{{env `KUBE_MAJOR_MINOR`}}",
+        "kube_patch": "{{env `KUBE_PATCH`}}",
+        "image_revision": "{{env `BUILD_NUMBER`}}"
+    },
+    "builders": [
+        {
+            "type": "virtualbox-ovf",
+            "headless": true,
+            "source_path": "{{ user `vagrant_home` }}/boxes/jumperfly-VAGRANTSLASH-etcd-base-3.3/{{ user `base_box_version` }}/virtualbox/box.ovf",
+            "guest_additions_mode": "disable",
+            "ssh_username": "root",
+            "ssh_password": "vagrant",
+            "shutdown_command": "poweroff",
+            "vboxmanage": [
+                [
+                    "modifyvm",
+                    "{{.Name}}",
+                    "--memory",
+                    "2048",
+                    "--cpus",
+                    "4"
+                ]
+            ]
+        }
+    ],
+    "provisioners": [
+        {
+            "type": "ansible",
+            "playbook_file": "./playbook.yml",
+            "galaxy_file": "requirements.yml",
+            "roles_path": "roles",
+            "groups": ["kube_master_nodes", "etcd_nodes"]
+        }
+    ],
+    "post-processors": [
+        [
+            {
+                "type": "vagrant",
+                "output": "output-virtualbox-ovf/kube-master-etcd-{{.Provider}}.box",
+                "keep_input_artifact": true
+            },
+            {
+                "type": "vagrant-cloud",
+                "box_tag": "jumperfly/kube-master-etcd-base-{{ user `kube_major_minor` }}",
+                "version": "{{user `kube_patch`}}.{{user `image_revision`}}"
+            }
+        ]
+    ]
+}
