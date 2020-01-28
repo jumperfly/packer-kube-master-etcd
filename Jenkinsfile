@@ -29,7 +29,7 @@ pipeline {
                 expression { return !fileExists("$HOME/.vagrant.d/boxes/jumperfly-VAGRANTSLASH-etcd-base-3.3/$BASE_BOX_VERSION/virtualbox/box.ovf") }
             }
             steps {
-                sh "vagrant box add jumperfly/centos-7 --box-version $BASE_BOX_VERSION"
+                sh "vagrant box add jumperfly/etcd-base-3.3 --box-version $BASE_BOX_VERSION"
             }
         }
         stage('Build') {
