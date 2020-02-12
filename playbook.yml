@@ -13,3 +13,5 @@
   post_tasks:
     - name: Clean yum cache
       command: yum clean all
+      args:
+        warn: no

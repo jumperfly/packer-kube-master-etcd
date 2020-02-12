@@ -7,7 +7,7 @@ pipeline {
 
     environment {
         VAGRANT_CLOUD_TOKEN = credentials('vagrant-cloud')
-        BASE_BOX_VERSION = "15.4"
+        BASE_BOX_VERSION = "15.11"
         KUBE_MAJOR_MINOR = "1.13"
         KUBE_PATCH = "1"
     }
@@ -21,7 +21,7 @@ pipeline {
                 }
             }
             steps {
-                sh 'rm -rf roles output-virtualbox-ovf'
+                sh 'rm -rf roles output-*'
             }
         }
         stage ('Download Base Box') {

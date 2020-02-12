@@ -1,4 +1,4 @@
 roles
-output-virtualbox-ovf
+output-*
 packer_cache
 .vagrant
