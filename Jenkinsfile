@@ -25,16 +25,29 @@ pipeline {
             }
         }
         stage ('Download Base Box') {
-            when { 
+            when {
                 expression { return !fileExists("$HOME/.vagrant.d/boxes/jumperfly-VAGRANTSLASH-etcd-base-3.3/$BASE_BOX_VERSION/virtualbox/box.ovf") }
             }
             steps {
                 sh "vagrant box add jumperfly/etcd-base-3.3 --box-version $BASE_BOX_VERSION"
             }
         }
+        stage('Build Base') {
+            steps {
+                sh 'packer build kube-master-etcd-base.json'
+            }
+        }
+        stage ('Download Box') {
+            when {
+                expression { return !fileExists("$HOME/.vagrant.d/boxes/jumperfly-VAGRANTSLASH-etcd-3.3/$BASE_BOX_VERSION/virtualbox/box.ovf") }
+            }
+            steps {
+                sh "vagrant box add jumperfly/etcd-3.3 --box-version $BASE_BOX_VERSION"
+            }
+        }
         stage('Build') {
             steps {
-                sh 'packer build packer.json'
+                sh 'packer build kube-master-etcd.json'
             }
         }
     }

@@ -1,0 +1,37 @@
+{
+    "variables": {
+        "base_box_version": "{{env `BASE_BOX_VERSION`}}",
+        "kube_major_minor": "{{env `KUBE_MAJOR_MINOR`}}",
+        "kube_patch": "{{env `KUBE_PATCH`}}",
+        "image_revision": "{{env `BUILD_NUMBER`}}"
+    },
+    "builders": [
+        {
+            "name": "kube-master-etcd",
+            "type": "vagrant",
+            "communicator": "ssh",
+            "provider": "virtualbox",
+            "source_path": "jumperfly/etcd-3.3",
+            "box_version": "{{ user `base_box_version` }}",
+            "skip_add": "true"
+        }
+    ],
+    "provisioners": [
+        {
+            "type": "ansible",
+            "playbook_file": "./playbook.yml",
+            "galaxy_file": "requirements.yml",
+            "roles_path": "roles",
+            "groups": ["kube_master_nodes", "etcd_nodes", "full_box"]
+        }
+    ],
+    "post-processors": [
+        [
+            {
+                "type": "vagrant-cloud",
+                "box_tag": "jumperfly/kube-master-etcd-{{ user `kube_major_minor` }}",
+                "version": "{{user `kube_patch`}}.{{user `image_revision`}}"
+            }
+        ]
+    ]
+}
